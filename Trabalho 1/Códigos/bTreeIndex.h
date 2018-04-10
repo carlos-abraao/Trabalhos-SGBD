@@ -1,6 +1,6 @@
 #include <iostream>
 #define D 5		//Order
-#define M 10		//Order
+#define M 10	//Order
 
 using namespace std;
 
@@ -98,14 +98,11 @@ bool find_eq(int k, BTnode* node){
 	}
 	else{														//the key is between child 0 and child n
 		int i;
-		for (i = 0; i <= (node -> nEntries); ++i){				//run all the indexes of the node. the "=" is for control reasons
+		for (i = 0; i < (node -> nEntries); ++i){				//run all the indexes of the node.
 			if (node->keys[i] > k) break;						//find an index greater than the key
-		}
-		if(i != (node -> nEntries))								//if i didnt run all the keys
-		 return find_eq(k, node->childs[i]);					//then, go to the left child of the found index 
-
+		}		
+		return find_eq(k, node->childs[i]);						//then, go to the left child of the found index 
 	}
-
 }
 
 /*
