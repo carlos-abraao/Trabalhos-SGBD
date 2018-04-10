@@ -55,7 +55,7 @@ struct BTnode{
 
 	bool IsRoot;
 	bool IsLeaf;			
-	int nEntries;			// numbers of entries on the node			
+	int nEntries;			//numbers of entries on the node			
 	BTnode *childs[10];		//pointers to the next level in case of it being a index level, not a data level(leaf)
 	int keys[9];			//keys values
 	BTnode *next;	
@@ -117,21 +117,69 @@ BTnode create_indexnode(int ind, BTnode* node){
 
 }
 */
+
+void insertOnNode (int k, BTnode* node, int nEntries){
+	int newData[9];											//create a new data array
+	for (int i = 0; i < 9; ++i) newData[i] = -1;			//set all values to default
+	int j = 0;												//auxiliar variable
+	bool trade = false;										//auxiliar variable
+
+	for (int i = 0; i < 9; ++i) cout << newData[i] << " ";
+	cout << endl;
+
+	for (int i = 0; i < nEntries; ++i){						//for every entrie on the node
+		
+		if( (node -> keys[i] < k) && trade == false ){		//if the node value is smaller thaan the key and the key has no been already inserted
+			newData[i] = node -> keys[j];					//newdata receives the actual value on the node
+			j++;											//advance j so its following i
+		}
+		else if (node -> keys[i] != k){						//if the node vale is not smaller nor equal to the key
+			newData[i] = k;									//new data[i] receive the key
+			trade = true;									//the key has been inseted
+		}
+		else												//the key already exists on the leaf
+			return;									//return NULL as a flag
+		
+	}
+
+	for (int i = 0; i < 9; ++i) cout << newData[i] << " ";
+	cout << endl;
+
+	for (int i = 0; i < 9; ++i){
+		if (newData[i] != -1){
+			node -> keys[i] = newData[i];
+		}
+		else 
+			break;
+		
+	}	
+
+	node -> nEntries++;
+
+}
+
 bool insert(int k, BTnode* &node){
 	if (node == NULL){					//empty tree
 		BTnode* aux = createnode(k);
 		aux ->IsRoot = 1;
 		aux ->IsLeaf = 1;
-		node = createnode(k + M);
-		node -> h = 1;
-		node -> childs[0] = aux;
+		node = aux;
 
 		return 1;
 	}
 
-	else{
+	else if ( (node -> IsRoot == 1) && (node -> IsLeaf == 1) ){
+
+		if(node -> nEntries == 9){
+			/* code */
+		}
+		else{
+			int j = node -> nEntries;
+			insertOnNode(k, node, node -> nEntries);
+			if (j == node -> nEntries) return 0;
+			return 1;
+		}
 		
-		return 0;
 	}
 
 }
