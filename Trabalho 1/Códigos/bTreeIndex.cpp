@@ -16,18 +16,17 @@ int main(int argc, char const *argv[]){
 
 	bool v = insert(10, root);
 	bool d = insert(9, root);
-	bool e = insert(11, root);
-	bool f = insert(11, root);
+	bool e = insert(8, root);
+	bool f = insert(10, root);
+	bool g = insert(11, root);
 
-	cout << v << " " << d << " " << e << " " << f << endl;
+
+	cout << v << " " << d << " " << e << " " << f << " " << g << endl;
 
 	cout << root -> keys[0] << endl;
 	cout << root -> keys[1] << endl;
 	cout << root -> keys[2] << endl;
 	cout << root -> keys[3] << endl;
-	cout << root -> IsLeaf << endl;
-	cout << root -> IsRoot << endl;
-
 
 	return 0;
 }
