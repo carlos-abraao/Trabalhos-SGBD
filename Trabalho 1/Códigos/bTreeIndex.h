@@ -53,6 +53,7 @@ int max(int a, int b){ return (a>b)? a : b; }	//auxiliar function
 
 struct BTnode{
 
+	bool IsRoot;
 	bool IsLeaf;			
 	int nEntries;			// numbers of entries on the node			
 	BTnode *childs[10];		//pointers to the next level in case of it being a index level, not a data level(leaf)
@@ -66,6 +67,7 @@ BTnode* createnode(int key){		//creates anode given one int value
 	
 	BTnode *newnode = new BTnode;
 
+	newnode -> IsRoot = 0;
 	newnode -> IsLeaf = 0;
 	newnode -> nEntries = 1;
 
@@ -82,24 +84,25 @@ BTnode* createnode(int key){		//creates anode given one int value
 
 
 bool find_eq(int k, BTnode* node){
-	if (node -> IsLeaf == 1){
-		for (int i = 0; i < (node -> nEntries); ++i){
-			if (node->keys[i] == k) return 1;
+	if (node -> IsLeaf == 1){									//if the node is a leaf (data) node
+		for (int i = 0; i < (node -> nEntries); ++i){			//check all the elements
+			if (node->keys[i] == k) return 1;					//if the element is found, then return 1
 		}
-		return 0;
+		return 0;												//here the element is not in the leaf, thus is not on the tree. return 0
 	}
-	else if (k < node->keys[0]){
-		find_eq(k, node->childs[0]);
+	else if (k < node->keys[0]){								//if the key is smaller than the leftmost element.
+		return find_eq(k, node->childs[0]);						//then, go to the leftmost child
 	}
-	else if (k > node->keys[ (node -> nEntries-1)] ){
-		find_eq(k, node->childs[ (node -> nEntries) ]);
+	else if (k > node->keys[ (node -> nEntries-1)] ){			//if the key is bigger than the rightmost element
+		return find_eq(k, node->childs[ (node -> nEntries) ]);	//then, go to rightmost child
 	}
-	else{
+	else{														//the key is between child 0 and child n
 		int i;
-		for (i = 0; i < (node -> nEntries); ++i){
-			if (node->keys[i] > k) break;
+		for (i = 0; i <= (node -> nEntries); ++i){				//run all the indexes of the node. the "=" is for control reasons
+			if (node->keys[i] > k) break;						//find an index greater than the key
 		}
-		find_eq(k, node->childs[i]);
+		if(i != (node -> nEntries))								//if i didnt run all the keys
+		 return find_eq(k, node->childs[i]);					//then, go to the left child of the found index 
 
 	}
 
@@ -117,6 +120,7 @@ BTnode create_indexnode(int ind, BTnode* node){
 bool insert(int k, BTnode* &node){
 	if (node == NULL){					//empty tree
 		BTnode* aux = createnode(k);
+		aux ->IsRoot = 1;
 		aux ->IsLeaf = 1;
 		node = createnode(k + M);
 		node -> h = 1;
