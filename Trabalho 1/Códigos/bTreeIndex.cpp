@@ -12,21 +12,39 @@ int main(int argc, char const *argv[]){
 	
 	cout << "Hello World!\n";
 
-	BTnode* root = NULL;
+	BTnode* root  = NULL;
+	BTnode* left  = NULL;
+	BTnode* right = NULL;
 
-	bool v = insert(10, root);
-	bool d = insert(9, root);
-	bool e = insert(8, root);
-	bool f = insert(10, root);
-	bool g = insert(11, root);
+	bool v = insert(6, root);
+	bool d = insert(1, left);
+	 d = insert(2, left);
+	 d = insert(3, left);
+	 d = insert(4, left);
+	 d = insert(5, left);
+	 d = insert(6, right);
+	 d = insert(7, right);
+	 d = insert(8, right);
+	 d = insert(9, right);
+	 d = insert(10, right);
 
+	root -> childs[0] = left;
+	root -> childs[1] = right;
+	root -> IsLeaf = 0;
 
-	cout << v << " " << d << " " << e << " " << f << " " << g << endl;
+	left -> next = right;
+	right -> prev = left;
 
-	cout << root -> keys[0] << endl;
-	cout << root -> keys[1] << endl;
-	cout << root -> keys[2] << endl;
-	cout << root -> keys[3] << endl;
+	for (int i = 0; i < 9; ++i) cout << root -> childs[0] -> keys[i] << " ";
+	cout << endl;
+
+	for (int i = 0; i < 9; ++i) cout << root -> childs[1] -> keys[i] << " ";
+	cout << endl;
+
+	d = find_eq(10, root);
+
+	cout << d << endl;
+
 
 	return 0;
 }
