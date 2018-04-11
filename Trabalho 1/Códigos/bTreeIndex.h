@@ -1,6 +1,6 @@
 #include <iostream>
 #define D 5		//Order
-#define M 10		//Order
+#define M 10	//Order
 
 using namespace std;
 
@@ -98,14 +98,11 @@ bool find_eq(int k, BTnode* node){
 	}
 	else{														//the key is between child 0 and child n
 		int i;
-		for (i = 0; i <= (node -> nEntries); ++i){				//run all the indexes of the node. the "=" is for control reasons
+		for (i = 0; i < (node -> nEntries); ++i){				//run all the indexes of the node.
 			if (node->keys[i] > k) break;						//find an index greater than the key
-		}
-		if(i != (node -> nEntries))								//if i didnt run all the keys
-		 return find_eq(k, node->childs[i]);					//then, go to the left child of the found index 
-
+		}		
+		return find_eq(k, node->childs[i]);						//then, go to the left child of the found index 
 	}
-
 }
 
 /*
@@ -118,32 +115,36 @@ BTnode create_indexnode(int ind, BTnode* node){
 }
 */
 
-void insertOnNode (int k, BTnode* node, int nEntries){
+void insertOnNode (int k, BTnode* node, int nEntries){		//insert on leaf
+
+	if(k > node -> keys[nEntries-1]){
+		node -> keys[nEntries] = k;
+		node -> nEntries++;
+		return;
+	}
+
 	int newData[9];											//create a new data array
 	for (int i = 0; i < 9; ++i) newData[i] = -1;			//set all values to default
-	int j = 0;												//auxiliar variable
-	bool trade = false;										//auxiliar variable
-
-	for (int i = 0; i < 9; ++i) cout << newData[i] << " ";
-	cout << endl;
+	int j = 0;												//auxiliar variable		
 
 	for (int i = 0; i < nEntries; ++i){						//for every entrie on the node
-		
-		if( (node -> keys[i] < k) && trade == false ){		//if the node value is smaller thaan the key and the key has no been already inserted
+				
+		if( node -> keys[i] < k ){		//if the node value is smaller thaan the key and the key has no been already inserted
 			newData[i] = node -> keys[j];					//newdata receives the actual value on the node
 			j++;											//advance j so its following i
 		}
-		else if (node -> keys[i] != k){						//if the node vale is not smaller nor equal to the key
+		else if (node -> keys[i] != k){						//if the node vale is not smaller nor equal to the key						
 			newData[i] = k;									//new data[i] receive the key
-			trade = true;									//the key has been inseted
+			for (int l = i+1; l < nEntries+1; ++l){
+				newData[l] = node -> keys[j];
+				j++;
+			}
+			break;			
 		}
 		else												//the key already exists on the leaf
 			return;									//return NULL as a flag
 		
 	}
-
-	for (int i = 0; i < 9; ++i) cout << newData[i] << " ";
-	cout << endl;
 
 	for (int i = 0; i < 9; ++i){
 		if (newData[i] != -1){
@@ -171,7 +172,7 @@ bool insert(int k, BTnode* &node){
 	else if ( (node -> IsRoot == 1) && (node -> IsLeaf == 1) ){
 
 		if(node -> nEntries == 9){
-			/* code */
+			/* split da raiz */;
 		}
 		else{
 			int j = node -> nEntries;
@@ -180,6 +181,13 @@ bool insert(int k, BTnode* &node){
 			return 1;
 		}
 		
+	}
+
+	else if (node -> IsLeaf == 1){
+		/* code */
+	}
+	else{
+
 	}
 
 }
