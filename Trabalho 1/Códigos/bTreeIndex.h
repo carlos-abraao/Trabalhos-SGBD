@@ -116,23 +116,24 @@ BTnode create_indexnode(int ind, BTnode* node){
 */
 
 void insertOnNode (int k, BTnode* node, int nEntries){		//insert on leaf
+
+	if(k > node -> keys[nEntries-1]){
+		node -> keys[nEntries] = k;
+		node -> nEntries++;
+		return;
+	}
+
 	int newData[9];											//create a new data array
 	for (int i = 0; i < 9; ++i) newData[i] = -1;			//set all values to default
 	int j = 0;												//auxiliar variable		
 
 	for (int i = 0; i < nEntries; ++i){						//for every entrie on the node
-
-		if(k > node -> keys[nEntries-1]){
-			for (int l = 0; l < nEntries; ++l) newData[l] = node -> keys[l];
-			newData[nEntries] = k;
-			break;
-		}		
+				
 		if( node -> keys[i] < k ){		//if the node value is smaller thaan the key and the key has no been already inserted
 			newData[i] = node -> keys[j];					//newdata receives the actual value on the node
 			j++;											//advance j so its following i
 		}
-		else if (node -> keys[i] != k){						//if the node vale is not smaller nor equal to the key			
-			cout << "entrei aqui" << endl;
+		else if (node -> keys[i] != k){						//if the node vale is not smaller nor equal to the key						
 			newData[i] = k;									//new data[i] receive the key
 			for (int l = i+1; l < nEntries+1; ++l){
 				newData[l] = node -> keys[j];
@@ -171,7 +172,7 @@ bool insert(int k, BTnode* &node){
 	else if ( (node -> IsRoot == 1) && (node -> IsLeaf == 1) ){
 
 		if(node -> nEntries == 9){
-			/* split da raiz */
+			/* split da raiz */;
 		}
 		else{
 			int j = node -> nEntries;
@@ -182,11 +183,12 @@ bool insert(int k, BTnode* &node){
 		
 	}
 
-	else if (node -> IsLeaf == 1)
-	{
+	else if (node -> IsLeaf == 1){
 		/* code */
 	}
-	else
+	else{
+
+	}
 
 }
 
