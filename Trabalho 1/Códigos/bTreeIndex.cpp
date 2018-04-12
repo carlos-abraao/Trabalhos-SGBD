@@ -16,35 +16,53 @@ int main(int argc, char const *argv[]){
 	BTnode* left  = NULL;
 	BTnode* right = NULL;
 
-	bool v = insert(6, root);
-	bool d = insert(1, left);
-	 d = insert(2, left);
-	 d = insert(3, left);
-	 d = insert(4, left);
-	 d = insert(5, left);
-	 d = insert(6, right);
-	 d = insert(7, right);
-	 d = insert(8, right);
-	 d = insert(9, right);
-	 d = insert(10, right);
+	insert(6, root);
+	insert(1, left);
+	insert(2, left);
+	insert(3, left);
+	insert(4, left);
+	insert(5, left);
+	insert(6, right);
+	insert(7, right);
+	insert(8, right);
+	insert(9, right);
+	insert(10, right);
 
 	root -> childs[0] = left;
 	root -> childs[1] = right;
 	root -> IsLeaf = 0;
+	right -> IsLeaf = 0;
+	left -> IsLeaf = 0;
 
 	left -> next = right;
 	right -> prev = left;
 
-	for (int i = 0; i < 9; ++i) cout << root -> childs[0] -> keys[i] << " ";
+	//print_nodeinfo(right);
+
 	cout << endl;
 
-	for (int i = 0; i < 9; ++i) cout << root -> childs[1] -> keys[i] << " ";
-	cout << endl;
+	BTnode* newroot = NULL;
 
-	d = find_eq(10, root);
+	insert(1, newroot);
+	insert(2, newroot);
+	insert(3, newroot);
+	insert(4, newroot);
+	insert(5, newroot);
+	insert(6, newroot);
+	insert(7, newroot);
+	insert(8, newroot);
+	insert(9, newroot);
+	insert(10, newroot);
 
-	cout << d << endl;
-
+	print_nodeinfo(newroot);
+	cout << endl;cout << endl;
+	print_nodeinfo(newroot->childs[0]);
+	cout << endl;cout << endl;
+	print_nodeinfo(newroot->childs[1]);
+	cout << endl;cout << endl;
+	//print_nodeinfo(newroot->childs[1]->father);
 
 	return 0;
 }
+
+
