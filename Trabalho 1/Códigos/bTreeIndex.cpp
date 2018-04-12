@@ -39,20 +39,22 @@ int main(int argc, char const *argv[]){
 
 	//print_nodeinfo(right);
 
-	cout << endl;
+	//cout << endl;
 
 	BTnode* newroot = NULL;
 
 	insert(1, newroot);
-	insert(2, newroot);
-	insert(3, newroot);
-	insert(4, newroot);
-	insert(5, newroot);
-	insert(6, newroot);
-	insert(7, newroot);
-	insert(8, newroot);
-	insert(9, newroot);
 	insert(10, newroot);
+	insert(2, newroot);
+	insert(7, newroot);
+	insert(4, newroot);
+	insert(8, newroot);
+	insert(5, newroot);
+	insert(3, newroot);
+	insert(6, newroot);
+	insert(9, newroot);
+	insert(11, newroot);
+	insert(0, newroot);
 
 	print_nodeinfo(newroot);
 	cout << endl;cout << endl;
@@ -61,6 +63,18 @@ int main(int argc, char const *argv[]){
 	print_nodeinfo(newroot->childs[1]);
 	cout << endl;cout << endl;
 	//print_nodeinfo(newroot->childs[1]->father);
+	cout << endl;cout << endl;
+	cout << endl;cout << endl;
+
+	int* inter = find_rg(1,4, newroot);
+
+	for (int i = 0; i < 4; ++i)
+	{
+		cout << inter[i] << " ";
+	}
+	cout << endl;
+
+
 
 	return 0;
 }
