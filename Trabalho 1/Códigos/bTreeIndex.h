@@ -4,52 +4,7 @@
 
 using namespace std;
 
-
-/*
-struct LeafNode{
-
-	int keys[9];	//9 possible entries	
-	LeafNode *next;	//poitner to the next leaf node
-	LeafNode *prev;	//pointer to previous leaf onde. they will be used in case of a range search
-};
-*/
-
-/*
-LeafNode *createleaf(int entrie){	//creates a leaf node, given a vector of entries data
-
-	LeafNode *newleaf = new LeafNode;
-	newleaf -> keys = entries;
-	newleaf -> next = NULL;
-	newleaf -> prev = NULL;
-
-	return newleaf;
-}
-*/
-
-/*
-void updateheight(BTnode *p){
-	if (p != NULL) {
-
-		int maxheight;
-
-		if (p -> child[0] != NULL){
-			maxheight = p -> child[0] -> h;
-			for (int i = 1; i < 10; ++i){
-				maxheight = max(maxheight, p->child[i]->h)
-			}
-		}
-		else if (p -> data[0] != NULL){
-			maxheight = 0;
-		}
-		else maxheight = -1;
-
-		p->h = 1 + maxheight
-
-	}
-}
-*/
-
-int max(int a, int b){ return (a>b)? a : b; }	//auxiliar function
+//int max(int a, int b){ return (a>b)? a : b; }	//auxiliar function
 
 struct BTnode{
 
@@ -60,23 +15,25 @@ struct BTnode{
 	int keys[9];			//keys values
 	BTnode *next;	
 	BTnode *prev;
+	BTnode *father;
 	int h;					// tree height. for balance purposes
 };
 
-BTnode* createnode(int key){		//creates anode given one int value
+BTnode* createnode(){		//creates anode given one int value
 	
 	BTnode *newnode = new BTnode;
 
-	newnode -> IsRoot = 0;
-	newnode -> IsLeaf = 0;
-	newnode -> nEntries = 1;
+	newnode -> IsRoot 	= 0;
+	newnode -> IsLeaf 	= 0;
+	newnode -> nEntries = 0;
 
 	for (int i = 0; i < M; ++i)	newnode-> childs[i] = NULL;
 	for (int i = 0; i < (M-1); ++i)	newnode-> keys[i] = -1;
-	newnode-> next = NULL;
-	newnode-> prev = NULL;
+	newnode-> next 	 = NULL;
+	newnode-> prev 	 = NULL;
+	newnode-> father = NULL;
 	
-	newnode -> keys[0] = key;	
+	//newnode -> keys[0] = key;	
 	newnode -> h = 0;
 
 	return newnode;
@@ -105,17 +62,50 @@ bool find_eq(int k, BTnode* node){
 	}
 }
 
-/*
+void print_nodeinfo(BTnode* node){
+	cout << "Root: " << node -> IsRoot	<< endl;
+	cout << "Leaf: " << node -> IsLeaf 	<< endl;
+	cout << "Entries : " << node -> nEntries	<< endl;
 
-BTnode create_indexnode(int ind, BTnode* node){
-	if (node -> IsLeaf == 1){
+	cout << "Keys: ";
 
-	}
+	for (int i = 0; i < (M-1); ++i) cout <<	node-> keys[i] << " ";
+	cout << endl;
+
+	if (node -> childs[0] != NULL) cout << "Has childs!" << endl;
+	else cout << "No childs!" << endl;
+
+	if (node -> next != NULL) cout << "Has right sibling!" << endl;
+	else cout << "No right sibling!" << endl;	
+	
+	if (node -> prev != NULL) cout << "Has left sibling!" << endl;
+	else cout << "No left sibling!" << endl;
+
+	cout << "Height: " << node -> h << endl;		
 
 }
-*/
 
-void insertOnNode (int k, BTnode* node, int nEntries){		//insert on leaf
+bool copy_node(BTnode* source, BTnode* &copy){
+	if (source == NULL) return 0;
+
+	if (copy == NULL) copy = createnode();
+	
+
+	copy -> IsRoot 	= source -> IsRoot;
+	copy -> IsLeaf 	= source -> IsLeaf;
+	copy -> nEntries = source -> nEntries;
+
+	for (int i = 0; i < M; ++i)	copy-> childs[i] = source -> childs[i];
+	for (int i = 0; i < (M-1); ++i)	copy-> keys[i] = source -> keys[i];
+		
+	copy-> next 	 = source -> next;
+	copy-> prev 	 = source -> prev;
+	copy-> father 	 = source -> father;
+	copy -> h = source -> h;	
+
+}
+
+void insertOnNode (int k, BTnode* node, int nEntries){		//insert on a leaf that has available space
 
 	if(k > node -> keys[nEntries-1]){
 		node -> keys[nEntries] = k;
@@ -129,7 +119,7 @@ void insertOnNode (int k, BTnode* node, int nEntries){		//insert on leaf
 
 	for (int i = 0; i < nEntries; ++i){						//for every entrie on the node
 				
-		if( node -> keys[i] < k ){		//if the node value is smaller thaan the key and the key has no been already inserted
+		if( node -> keys[i] < k ){							//if the node value is smaller thaan the key and the key has no been already inserted
 			newData[i] = node -> keys[j];					//newdata receives the actual value on the node
 			j++;											//advance j so its following i
 		}
@@ -142,7 +132,7 @@ void insertOnNode (int k, BTnode* node, int nEntries){		//insert on leaf
 			break;			
 		}
 		else												//the key already exists on the leaf
-			return;									//return NULL as a flag
+			return;											//return NULL as a flag
 		
 	}
 
@@ -161,7 +151,9 @@ void insertOnNode (int k, BTnode* node, int nEntries){		//insert on leaf
 
 bool insert(int k, BTnode* &node){
 	if (node == NULL){					//empty tree
-		BTnode* aux = createnode(k);
+		BTnode* aux = createnode();
+		aux -> keys[0] = k;
+		aux -> nEntries = 1;
 		aux ->IsRoot = 1;
 		aux ->IsLeaf = 1;
 		node = aux;
@@ -172,7 +164,21 @@ bool insert(int k, BTnode* &node){
 	else if ( (node -> IsRoot == 1) && (node -> IsLeaf == 1) ){
 
 		if(node -> nEntries == 9){
-			/* split da raiz */;
+
+			for (int i = 0; i < 9; ++i){
+				if (k == node -> keys[i]) return 0;
+			}
+
+			int newIndex;
+			if (k < node -> keys[4]) newIndex = node -> keys[4];
+
+			else if (k > node -> keys[4] && k < node -> keys[5]) newIndex = k;
+
+			else newIndex = newIndex = node -> keys[5];
+
+			BTnode * copy = NULL;
+			copy_node(node, copy);
+
 		}
 		else{
 			int j = node -> nEntries;
