@@ -28,19 +28,24 @@ int main(int argc, char const *argv[]){
 	switch(choose){
 		case 0:
 			break;
-		case 1: 
+		case 1:
+		{
 			int a;
 			cout << "Informe o valor inteiro a ser inserido: ";
 			cin >> a;
 			insert(a,root);  
 			break;
+		}
 		case 2:
+		{
 			int b;
 			cout << "Informe o valor a ser excluido: ";
 			cin >> b;
 			//Função Excluir
 			break;
+		}
 		case 3:
+		{
 			int c;
 			cout << "Informe o valor a ser buscado: ";
 			cin >> c;
@@ -50,7 +55,9 @@ int main(int argc, char const *argv[]){
 				cout << "+--------------------------ERRO: Falha na inserção inserção!--------------------------+" << endl << endl;
 			}
 			break;
+		}
 		case 4:
+		{
 			int d, e;
 			cout << "Informe o primeiro valor do intervalo: ";
 			cin >> d;
@@ -76,7 +83,9 @@ int main(int argc, char const *argv[]){
 				cout << "+-------------------------------Nenhum valor encontrado-------------------------------+" << endl << endl;
 			}
 			break;
+		}
 		case 5:
+		{
 			int size = 0;
 			
 			cout << "Informe a quantidade de valores que serão inseridos: ";
@@ -92,13 +101,14 @@ int main(int argc, char const *argv[]){
 				vector[m] = f;
 			}
 			
-			if(bulkLoading(vector, &size, root) == 1){
+			if(bulkLoading(vector, size, root) == 1){
 				cout << "+-------------------------Bulk-Loading carregado com sucesso!-------------------------+" << endl << endl;
 			}else{
 				cout << "+--------------------------ERRO: Ocorreu um erro na inserção--------------------------+" << endl << endl;
 			}
 			
 			break;
+		}
 		default:
 			cout << "+----------------------------ERRO: Insira uma opção válida----------------------------+" << endl << endl;
 	}
