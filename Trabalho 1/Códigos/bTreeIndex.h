@@ -71,9 +71,15 @@ int* find_rg(int k1, int k2, BTnode* node){
 	list<int> vetor;
 	
 	if(k1 > k2){
+<<<<<<< HEAD
 		aux = k1;
 		k1 = k2;
 		k2 = aux;
+=======
+		aux = k2;
+		k2 = k1;
+		k1 = aux;
+>>>>>>> 9bb9144da1d5adec72bd340c199c300ad6b9f29d
 	}
 
 	if (node -> IsLeaf == 1){
