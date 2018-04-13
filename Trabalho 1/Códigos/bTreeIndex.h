@@ -14,6 +14,7 @@ struct BTnode{
 
 	bool IsRoot;
 	bool IsLeaf;			
+	bool visitado;
 	int nEntries;			//numbers of entries on the node			
 	BTnode *childs[10];		//pointers to the next level in case of it being a index level, not a data level(leaf)
 	int keys[9];			//keys values
@@ -27,6 +28,7 @@ BTnode* createnode(){		//creates anode given one int value
 	
 	BTnode *newnode = new BTnode;
 
+	newnode -> visitado	= 0;
 	newnode -> IsRoot 	= 0;
 	newnode -> IsLeaf 	= 0;
 	newnode -> nEntries = 0;
@@ -71,15 +73,9 @@ int* find_rg(int k1, int k2, BTnode* node){
 	list<int> vetor;
 	
 	if(k1 > k2){
-<<<<<<< HEAD
 		aux = k1;
 		k1 = k2;
 		k2 = aux;
-=======
-		aux = k2;
-		k2 = k1;
-		k1 = aux;
->>>>>>> 9bb9144da1d5adec72bd340c199c300ad6b9f29d
 	}
 
 	if (node -> IsLeaf == 1){
@@ -179,32 +175,34 @@ void copy_node(BTnode* source, BTnode* &copy){
 }
 
 void visita(BTnode* node){
-	if (node != NULL){
+	if (node != NULL && node -> visitado == 0){
+		node -> visitado =1;
 		if (node -> IsLeaf == 0){
-			cout << "Nó indice!\nDados: " << endl;
+			cout << "Nó indice!\nDados: ";
 			for (int i = 0; i < node -> nEntries; ++i) cout << node -> keys[i] << " ";
 			cout << endl;
 		}
 		else{
-			cout << "Nó folha!\nDados: " << endl;
+			cout << "Nó folha!\nDados: ";
 			for (int i = 0; i < node -> nEntries; ++i) cout << node -> keys[i] << " ";
 			cout << endl;	
 		}
+		cout << endl;
 	}
 }
 
 void emOrdem(BTnode* node) {
 	if (node != NULL) {
-		for (int i = 0; i < node -> nEntries; ++i){
-			cout << "eita" << endl;
+		for (int i = 0; i < node -> nEntries; ++i){			
 			emOrdem(node -> childs[i]);
-			emOrdem(node);
+			visita(node);
 			emOrdem(node -> childs[i+1]);
 		}		
 	}
+	//else cout << "arvore vazia" << endl;
 }
 
-void insertOnNode (int k, BTnode* node, int nEntries){		//insert on a leaf that has available space
+void insertOnLeaf (int k, BTnode* node, int nEntries){		//insert on a leaf that has available space
 
 	if(k > node -> keys[nEntries-1]){
 		node -> keys[nEntries] = k;
@@ -248,6 +246,52 @@ void insertOnNode (int k, BTnode* node, int nEntries){		//insert on a leaf that 
 
 }
 
+
+void insertOnIndex (int k, BTnode* father, BTnode* son){		
+
+	if(k > node -> keys[nEntries-1]){
+		node -> keys[nEntries] = k;
+		node -> nEntries++;
+		return;
+	}
+
+	int newData[9];											
+	for (int i = 0; i < 9; ++i) newData[i] = -1;			
+	int j = 0;												
+
+	for (int i = 0; i < nEntries; ++i){						
+				
+		if( node -> keys[i] < k ){							
+			newData[i] = node -> keys[j];					
+			j++;											
+		}
+		else if (node -> keys[i] != k){						
+			newData[i] = k;									
+			for (int l = i+1; l < nEntries+1; ++l){
+				newData[l] = node -> keys[j];
+				j++;
+			}
+			break;			
+		}
+		else												
+			return;											
+		
+	}
+
+	for (int i = 0; i < 9; ++i){
+		if (newData[i] != -1){
+			node -> keys[i] = newData[i];
+		}
+		else 
+			break;
+		
+	}	
+
+	node -> nEntries++;
+
+}
+
+
 bool insert(int k, BTnode* &node){
 	if (node == NULL){					//empty tree
 		BTnode* aux = createnode();
@@ -265,7 +309,7 @@ bool insert(int k, BTnode* &node){
 	else if ( (node -> IsLeaf == 1) ){ 
 
 			if(node -> nEntries == 9){
-				if (node -> IsRoot == 1){
+				if (node -> IsRoot == 1){							//split de um nó folha e raiz
 					for (int i = 0; i < 9; ++i){
 						if (k == node -> keys[i]) return 0;
 					}
@@ -314,14 +358,14 @@ bool insert(int k, BTnode* &node){
 
 
 					switch (caso){
-						case 0:	insertOnNode(k, left, left->nEntries);
-								for (int i = 0; i < 4; ++i) insertOnNode(copy -> keys[i], left, left->nEntries);	//metade esquerda dos dados
-								for (int i = 4; i < 9; ++i) insertOnNode(copy -> keys[i], right, right->nEntries);	//metade direita dos dados	
+						case 0:	insertOnLeaf(k, left, left->nEntries);
+								for (int i = 0; i < 4; ++i) insertOnLeaf(copy -> keys[i], left, left->nEntries);	//metade esquerda dos dados
+								for (int i = 4; i < 9; ++i) insertOnLeaf(copy -> keys[i], right, right->nEntries);	//metade direita dos dados	
 								break;	
 
-						case 1:	insertOnNode(k, right, right->nEntries);
-								for (int i = 0; i < 5; ++i) insertOnNode(copy -> keys[i], left, left->nEntries);	//metade esquerda dos dados
-								for (int i = 5; i < 9; ++i) insertOnNode(copy -> keys[i], right, right->nEntries);	//metade direita dos dados	
+						case 1:	insertOnLeaf(k, right, right->nEntries);
+								for (int i = 0; i < 5; ++i) insertOnLeaf(copy -> keys[i], left, left->nEntries);	//metade esquerda dos dados
+								for (int i = 5; i < 9; ++i) insertOnLeaf(copy -> keys[i], right, right->nEntries);	//metade direita dos dados	
 								break;
 
 						default: cerr << "Some error ocurred on the split" << endl;
@@ -332,14 +376,76 @@ bool insert(int k, BTnode* &node){
 
 					return 1;
 				}
-				else{
-					//split dificil
-				}		
+				else{									//splt difçil (genérico)
+					BTnode* newnode = createnode();
+					BTnode* copy  = NULL;					
+
+					for (int i = 0; i < 9; ++i){
+						if (k == node -> keys[i]) return 0;
+					}
+
+					int newIndex, caso;
+
+					if (k < node -> keys[4]){
+						newIndex = node -> keys[4];
+						caso = 0;
+					}
+
+					else if (k > node -> keys[4] && k < node -> keys[5]){
+						newIndex = k;
+						caso = 1;
+					}
+
+					else{
+						newIndex = node -> keys[5];
+						caso = 1;
+					}
+
+					copy_node(node, copy);
+					copy_node(node, newnode);
+					for (int i = 0; i < 9; ++i) node ->keys[i] = -1;
+					for (int i = 0; i < 9; ++i) newnode ->keys[i] = -1;
+					node -> nEntries = 0;
+					newnode -> nEntries = 0;
+
+					newnode -> next = node-> next;
+					newnode -> next -> prev = newnode;
+					node -> next = newnode;
+					newnode -> prev = node;
+					newnode -> father = node -> father;
+					newnode -> h = node-> h;
+
+					switch (caso){
+						case 0:	insertOnLeaf(k, node, node->nEntries);
+								for (int i = 0; i < 4; ++i) insertOnLeaf(copy -> keys[i], node, node->nEntries);	//metade esquerda dos dados
+								for (int i = 4; i < 9; ++i) insertOnLeaf(copy -> keys[i], newnode, newnode->nEntries);	//metade direita dos dados	
+								break;	
+
+						case 1:	insertOnLeaf(k, newnode, newnode->nEntries);
+								for (int i = 0; i < 5; ++i) insertOnLeaf(copy -> keys[i], node, node->nEntries);	//metade esquerda dos dados
+								for (int i = 5; i < 9; ++i) insertOnLeaf(copy -> keys[i], newnode, newnode->nEntries);	//metade direita dos dados	
+								break;
+
+						default: cerr << "Some error ocurred on the split" << endl;
+
+					}
+
+					if (copy->father->nEntries != 9){ //sem split no pai
+						newnode->father = copy->father;
+						// insert on index
+					}
+					else{							  //com split no pai
+
+					}
+
+
+
+				}	
 
 			}
 			else{
 				int j = node -> nEntries;
-				insertOnNode(k, node, node -> nEntries);
+				insertOnLeaf(k, node, node -> nEntries);
 				if (j == node -> nEntries) return 0;
 				return 1;
 			}
@@ -358,15 +464,6 @@ bool insert(int k, BTnode* &node){
 				if (node -> keys[i] > k) return insert(k, node -> childs[i]);
 			}
 		}
-	}
-
-	else if (node -> IsLeaf == 1){
-		if (node-> nEntries < 9){
-			//insertOnNode(k, node);
-		}
-	}
-	else{
-
 	}
 
 }

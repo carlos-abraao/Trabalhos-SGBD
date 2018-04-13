@@ -10,37 +10,7 @@ using namespace std;
 
 int main(int argc, char const *argv[]){
 	clear();
-	cout << "Hello World!\n";
-
-	BTnode* root  = NULL;
-	BTnode* left  = NULL;
-	BTnode* right = NULL;
-
-	insert(6, root);
-	insert(1, left);
-	insert(2, left);
-	insert(3, left);
-	insert(4, left);
-	insert(5, left);
-	insert(6, right);
-	insert(7, right);
-	insert(8, right);
-	insert(9, right);
-	insert(10, right);
-
-	root -> childs[0] = left;
-	root -> childs[1] = right;
-	root -> IsLeaf = 0;
-	right -> IsLeaf = 0;
-	left -> IsLeaf = 0;
-
-	left -> next = right;
-	right -> prev = left;
-
-	//print_nodeinfo(right);
-
-	//cout << endl;
-
+/*
 	BTnode* newroot = NULL;
 
 	insert(1, newroot);
@@ -61,16 +31,45 @@ int main(int argc, char const *argv[]){
 	print_nodeinfo(newroot->childs[0]);
 	cout << endl;cout << endl;
 	print_nodeinfo(newroot->childs[1]);
-	cout << endl;cout << endl;
-	//print_nodeinfo(newroot->childs[1]->father);
-	cout << endl;cout << endl;
-	cout << endl;cout << endl;
+	cout << endl;cout << endl;	
 
 	emOrdem(newroot);
 
 	cout << endl;
+*/
+
+	BTnode* newroot = NULL;
+	
+	insert(20, newroot);
+	insert(40, newroot);
+	insert(50, newroot);
+	insert(10, newroot);
+	insert(60, newroot);
+	insert(90, newroot);
+	insert(30, newroot);
+	insert(70, newroot);
+	insert(80, newroot);
+
+	emOrdem (newroot);
+
+	insert(100, newroot);
+
+	emOrdem (newroot);
+
+	bool  v = find_eq(20, newroot);
+
+	cout << "20: " << v << endl;
 
 
+	v = find_eq(25, newroot);
+
+	cout << "25: " << v << endl;
+
+	int* vetor = find_rg(30, 70, newroot);	
+
+	for (int i = 0; i < 5; ++i) cout << vetor[i] << " ";
+
+	cout << endl;
 
 	return 0;
 }
