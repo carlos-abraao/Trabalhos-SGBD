@@ -21,7 +21,7 @@ int main(int argc, char const *argv[]){
 	cout << "+-------------------------------------------------------------------------------------+" << endl;
 
 	while(choose != 0){
-	cout << "Escola uma função:" << endl << "(1) Inserção" << endl << "(2) Exclusão" << endl 
+	cout << "Escolha uma função:" << endl << "(1) Inserção" << endl << "(2) Exclusão" << endl 
 	<< "(3) Busca por igualdade" << endl << "(4) Busca por intervalo" << endl << "(5) Bulk-Loading" << endl << "(0) Turn-off" << endl;
 	cin >> choose;
 	cout << endl;
@@ -32,7 +32,7 @@ int main(int argc, char const *argv[]){
 			int a;
 			cout << "Informe o valor inteiro a ser inserido: ";
 			cin >> a;
-			//insert(a);  
+			insert(a,root);  
 			break;
 		case 2:
 			int b;
@@ -44,7 +44,7 @@ int main(int argc, char const *argv[]){
 			int c;
 			cout << "Informe o valor a ser buscado: ";
 			cin >> c;
-			if(/*Função Inserção*/ == 0){
+			if(find_eq(c,root) == 0){
 				cout << "+---------------------------Inserção carregada com sucesso!---------------------------+" << endl << endl;
 			}else{
 				cout << "+--------------------------ERRO: Falha na inserção inserção!--------------------------+" << endl << endl;
@@ -56,10 +56,28 @@ int main(int argc, char const *argv[]){
 			cin >> d;
 			cout << "Informe o segundo valor do intervalo: ";
 			cin >> e;
-			//Função Buscar por igualdade
+
+			int aux;
+			if(k1 > k2){
+				aux = k2;
+				k2 = k1;
+				k1 = aux;
+			}
+			int range[k2-k1];
+
+			if(find_rg(d,e,root) != NULL){
+				for (int i = 0; i < k2-k1; ++i)
+				{
+					cout << range[i] << " ";
+				}
+				cout << endl < endl;
+			}
+			else{
+				cout << "+-------------------------------Nenhum valor encontrado-------------------------------+" << endl << endl;
+			}
 			break;
 		case 5:
-			int size;
+			int size = 0;
 			cout << "Informe a quantidade de valores que serão inseridos: ";
 			cin >> size;
 			int vector[size];
