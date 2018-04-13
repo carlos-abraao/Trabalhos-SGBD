@@ -101,7 +101,7 @@ int main(int argc, char const *argv[]){
 				vector[m] = f;
 			}
 			
-			if(bulkLoading(vector, size, root) == 1){
+			if(bulkLoading(vector,s size, root) == 1){
 				cout << "+-------------------------Bulk-Loading carregado com sucesso!-------------------------+" << endl << endl;
 			}else{
 				cout << "+--------------------------ERRO: Ocorreu um erro na inserção--------------------------+" << endl << endl;
