@@ -9,7 +9,7 @@
 using namespace std;
 
 int main(int argc, char const *argv[]){
-	
+	clear();
 	cout << "Hello World!\n";
 
 	BTnode* root  = NULL;
@@ -51,9 +51,9 @@ int main(int argc, char const *argv[]){
 	insert(8, newroot);
 	insert(5, newroot);
 	insert(3, newroot);
+	insert(11, newroot);
 	insert(6, newroot);
 	insert(9, newroot);
-	insert(11, newroot);
 	insert(0, newroot);
 
 	print_nodeinfo(newroot);
@@ -66,12 +66,8 @@ int main(int argc, char const *argv[]){
 	cout << endl;cout << endl;
 	cout << endl;cout << endl;
 
-	int* inter = find_rg(1,4, newroot);
+	emOrdem(newroot);
 
-	for (int i = 0; i < 4; ++i)
-	{
-		cout << inter[i] << " ";
-	}
 	cout << endl;
 
 

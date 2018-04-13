@@ -5,7 +5,10 @@
 
 using namespace std;
 
-//int max(int a, int b){ return (a>b)? a : b; }	//auxiliar function
+void clear() {
+    // CSI[2J clears screen, CSI[H moves the cursor to top-left corner
+    std::cout << "\x1B[2J\x1B[H";
+}
 
 struct BTnode{
 
@@ -67,7 +70,7 @@ int* find_rg(int k1, int k2, BTnode* node){
 	int aux;
 	list<int> vetor;
 	
-	if(k1 < k2){
+	if(k1 > k2){
 		aux = k1;
 		k1 = k2;
 		k2 = aux;
@@ -81,71 +84,39 @@ int* find_rg(int k1, int k2, BTnode* node){
 		while(auxNode->keys[i] < k1 && auxNode->keys[i] != -1){
 			i++;				
 		}
-		if (auxNode -> keys[i] != -1){
-			while(auxNode != NULL || auxNode -> keys[i] > k2){
-				if(auxNode -> keys[i] == -1 && i == 9){
-					auxNode = auxNode -> next;
-					i = 0;
-				}
-				vetor.push_back(auxNode -> keys[i]);
-				i++;
-			}
-
-			cout << "size é: " << vetor.size() << endl;
-			range = new int [vetor.size()];
-			
-			list<int>::iterator it;
-			int j = 0;
-			for (it = vetor.begin(); it != vetor.end(); ++it){
-    			range[j] = *it;
-    			j++;
-			}
-
-			for (int i = 0; i < 4; ++i)
-			{
-				cout << range[i] << " ";
-			}
-
-
-			return range;
-
-
-		}
-		else if (auxNode -> next != NULL){
+		
+		if (auxNode -> keys[i] == -1){
 			auxNode = auxNode -> next;
 			i = 0;
-			while(auxNode != NULL || auxNode -> keys[i] > k2){
-				if(auxNode -> keys[i] == -1 && i == 9){
-					auxNode = auxNode -> next;
-					i = 0;
-				}
-				vetor.push_back(auxNode -> keys[i]);
-				i++;
+		}
+		while(auxNode != NULL && auxNode -> keys[i] <= k2){
+			if(auxNode -> keys[i] == -1 || i == 8){					
+				auxNode = auxNode -> next;
+				i = 0;
 			}
-			cout << "size é: " << vetor.size() << endl;
+			vetor.push_back(auxNode -> keys[i]);
+			i++;
+		}
 
+		if (vetor.size()){
 			range = new int [vetor.size()];
+
 			list<int>::iterator it;
 			int j = 0;
 			for (it = vetor.begin(); it != vetor.end(); ++it){
-    			range[j] = *it;
-    			j++;
+				range[j] = *it;
+				j++;
 			}
-
-			for (int i = 0; i < 4; ++i)
-			{
-				cout << range[i] << " ";
-			}
-
-			return range;
 		}
 
-		return NULL;								
+		else range = NULL;
+
+		return range;								
 	}
 	else if (k1 < node->keys[0]){								
 		return find_rg(k1, k2, node->childs[0]);						
 	}
-	else if (k1 > node->keys[ (node -> nEntries-1)] ){			
+	else if (k1 > node->keys[ (node -> nEntries-1)] ){		
 		return find_rg(k1, k2, node->childs[ (node -> nEntries) ]);	
 	}
 	else{														
@@ -199,6 +170,32 @@ void copy_node(BTnode* source, BTnode* &copy){
 	copy-> father 	 = source -> father;
 	copy -> h = source -> h;	
 
+}
+
+void visita(BTnode* node){
+	if (node != NULL){
+		if (node -> IsLeaf == 0){
+			cout << "Nó indice!\nDados: " << endl;
+			for (int i = 0; i < node -> nEntries; ++i) cout << node -> keys[i] << " ";
+			cout << endl;
+		}
+		else{
+			cout << "Nó folha!\nDados: " << endl;
+			for (int i = 0; i < node -> nEntries; ++i) cout << node -> keys[i] << " ";
+			cout << endl;	
+		}
+	}
+}
+
+void emOrdem(BTnode* node) {
+	if (node != NULL) {
+		for (int i = 0; i < node -> nEntries; ++i){
+			cout << "eita" << endl;
+			emOrdem(node -> childs[i]);
+			emOrdem(node);
+			emOrdem(node -> childs[i+1]);
+		}		
+	}
 }
 
 void insertOnNode (int k, BTnode* node, int nEntries){		//insert on a leaf that has available space
