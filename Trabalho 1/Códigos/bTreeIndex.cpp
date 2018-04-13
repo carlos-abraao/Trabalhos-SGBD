@@ -50,11 +50,37 @@ int main(int argc, char const *argv[]){
 	insert(70, newroot);
 	insert(80, newroot);
 
-	emOrdem (newroot);
+	//emOrdem (newroot);
 
 	insert(100, newroot);
+	insert(101, newroot);
+	insert(102, newroot);
+	insert(103, newroot);
+	insert(104, newroot);	
+
+	//emOrdem (newroot);
+
+	insert(105, newroot);
+	
+
+
+	insert(106, newroot);
+	insert(107, newroot);
+	insert(108, newroot);
+	insert(109, newroot);
+	insert(110, newroot);
+	insert(111, newroot);
+	insert(112, newroot);
+	insert(113, newroot);
+	insert(114, newroot);
+	insert(115, newroot);
+	insert(116, newroot);
+	insert(117, newroot);
+	insert(118, newroot);
 
 	emOrdem (newroot);
+
+	print_nodeinfo(newroot);
 
 	bool  v = find_eq(20, newroot);
 
@@ -65,9 +91,9 @@ int main(int argc, char const *argv[]){
 
 	cout << "25: " << v << endl;
 
-	int* vetor = find_rg(30, 70, newroot);	
+	int* vetor = find_rg(30, 118, newroot);	
 
-	for (int i = 0; i < 5; ++i) cout << vetor[i] << " ";
+	for (int i = 0; i < 26; ++i) cout << vetor[i] << " ";
 
 	cout << endl;
 

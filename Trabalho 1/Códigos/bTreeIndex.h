@@ -132,6 +132,12 @@ int* find_rg(int k1, int k2, BTnode* node){
 }
 
 void print_nodeinfo(BTnode* node){
+
+	if (node == NULL){
+		cout << "Nó vazio" << endl;
+		return;
+	}
+
 	cout << "Root: " << node -> IsRoot	<< endl;
 	cout << "Leaf: " << node -> IsLeaf 	<< endl;
 	cout << "Entries : " << node -> nEntries	<< endl;
@@ -249,45 +255,27 @@ void insertOnLeaf (int k, BTnode* node, int nEntries){		//insert on a leaf that 
 
 void insertOnIndex (int k, BTnode* father, BTnode* son){		
 
-	if(k > node -> keys[nEntries-1]){
-		node -> keys[nEntries] = k;
-		node -> nEntries++;
-		return;
-	}
+	
+	BTnode* newData = NULL;											
+	copy_node(father, newData);
+	
+	int j;
 
-	int newData[9];											
-	for (int i = 0; i < 9; ++i) newData[i] = -1;			
-	int j = 0;												
+	for (j = 0; j < father -> nEntries; j++)
+		if (father -> keys[j] > k) break;
 
-	for (int i = 0; i < nEntries; ++i){						
-				
-		if( node -> keys[i] < k ){							
-			newData[i] = node -> keys[j];					
-			j++;											
-		}
-		else if (node -> keys[i] != k){						
-			newData[i] = k;									
-			for (int l = i+1; l < nEntries+1; ++l){
-				newData[l] = node -> keys[j];
-				j++;
-			}
-			break;			
-		}
-		else												
-			return;											
-		
-	}
+	father -> childs[j+1] = son;
+	father -> keys[j] = k;
 
-	for (int i = 0; i < 9; ++i){
-		if (newData[i] != -1){
-			node -> keys[i] = newData[i];
+	for (int i = j+2; i <= father->nEntries; ++i){
+		father -> childs[i] = newData -> childs[j+1];		
+		j++;
+		if (i < father -> nEntries){
+			father -> keys[i-1] = newData -> keys[j];
 		}
-		else 
-			break;
-		
 	}	
 
-	node -> nEntries++;
+	father -> nEntries++;
 
 }
 
@@ -378,7 +366,7 @@ bool insert(int k, BTnode* &node){
 				}
 				else{									//splt difçil (genérico)
 					BTnode* newnode = createnode();
-					BTnode* copy  = NULL;					
+					BTnode* copy    = createnode();
 
 					for (int i = 0; i < 9; ++i){
 						if (k == node -> keys[i]) return 0;
@@ -401,19 +389,30 @@ bool insert(int k, BTnode* &node){
 						caso = 1;
 					}
 
+					
+
 					copy_node(node, copy);
 					copy_node(node, newnode);
 					for (int i = 0; i < 9; ++i) node ->keys[i] = -1;
 					for (int i = 0; i < 9; ++i) newnode ->keys[i] = -1;
 					node -> nEntries = 0;
-					newnode -> nEntries = 0;
+					newnode -> nEntries = 0;					
 
-					newnode -> next = node-> next;
-					newnode -> next -> prev = newnode;
+					newnode -> next = node-> next;			
+
+					if (copy -> next != NULL) copy -> next -> prev = newnode;
+
 					node -> next = newnode;
+					
+
 					newnode -> prev = node;
+					
+
 					newnode -> father = node -> father;
+					
+
 					newnode -> h = node-> h;
+										
 
 					switch (caso){
 						case 0:	insertOnLeaf(k, node, node->nEntries);
@@ -430,9 +429,9 @@ bool insert(int k, BTnode* &node){
 
 					}
 
-					if (copy->father->nEntries != 9){ //sem split no pai
+					if (copy->father->nEntries != 9){ //sem split no pai						
 						newnode->father = copy->father;
-						// insert on index
+						insertOnIndex (k, newnode->father, newnode);
 					}
 					else{							  //com split no pai
 
