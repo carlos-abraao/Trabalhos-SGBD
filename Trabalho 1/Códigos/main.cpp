@@ -58,19 +58,19 @@ int main(int argc, char const *argv[]){
 			cin >> e;
 
 			int aux;
-			if(k1 > k2){
-				aux = k2;
-				k2 = k1;
-				k1 = aux;
+			if(e > d){
+				aux = e;
+				e = d;
+				d = aux;
 			}
-			int range[k2-k1];
+			int range[e-d];
 
 			if(find_rg(d,e,root) != NULL){
-				for (int i = 0; i < k2-k1; ++i)
+				for (int i = 0; i < e-d; ++i)
 				{
 					cout << range[i] << " ";
 				}
-				cout << endl < endl;
+				cout << endl << endl;
 			}
 			else{
 				cout << "+-------------------------------Nenhum valor encontrado-------------------------------+" << endl << endl;
@@ -78,16 +78,21 @@ int main(int argc, char const *argv[]){
 			break;
 		case 5:
 			int size = 0;
+			
 			cout << "Informe a quantidade de valores que serão inseridos: ";
 			cin >> size;
+			
 			int vector[size];
 			int f;
+			
 			cout << endl << "Informe a seguir o conjunto de valores que deseja inserir (0 para parar):" << endl;
-			for(int i = 0; i < size; i++){
+			
+			for(int m = 0; m < size; m++){
 				cin >> f;
-				vector[i] = f;
+				vector[m] = f;
 			}
-			if(/*Função Bulk-Loading*/ == 0){
+			
+			if(bulkLoading(vector, &size, root) == 1){
 				cout << "+-------------------------Bulk-Loading carregado com sucesso!-------------------------+" << endl << endl;
 			}else{
 				cout << "+--------------------------ERRO: Ocorreu um erro na inserção--------------------------+" << endl << endl;
@@ -96,7 +101,7 @@ int main(int argc, char const *argv[]){
 			break;
 		default:
 			cout << "+----------------------------ERRO: Insira uma opção válida----------------------------+" << endl << endl;
-		}
+	}
 
 	}
 
