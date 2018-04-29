@@ -1,5 +1,6 @@
 #include <iostream>
 #include <list>
+#include <math.h>
 #define D 5		//Order
 #define M 10	//Order
 
@@ -101,9 +102,7 @@ int* find_rg(int k1, int k2, BTnode* node){
 		}
 
 		if (vetor.size()){
-			range = new int [vetor.size()];
-
-			cout << vetor.size();
+			range = new int [vetor.size()];			
 
 			list<int>::iterator it;
 			int j = 0;
@@ -182,6 +181,22 @@ void copy_node(BTnode* source, BTnode* &copy){
 
 }
 
+void devisita(BTnode* &node){
+	if (node != NULL ){		
+		node -> visitado = 0;		
+	}
+}
+
+void desOrdem(BTnode* &node) {
+	if (node != NULL) {
+		for (int i = 0; i < node -> nEntries; ++i){			
+			desOrdem(node -> childs[i]);
+			devisita(node);
+			desOrdem(node -> childs[i+1]);
+		}		
+	}	
+}
+
 void visita(BTnode* node){
 	if (node != NULL && node -> visitado == 0){
 		node -> visitado =1;
@@ -205,7 +220,8 @@ void emOrdem(BTnode* node) {
 			emOrdem(node -> childs[i]);
 			visita(node);
 			emOrdem(node -> childs[i+1]);
-		}		
+		}
+		desOrdem(node);
 	}
 	//else cout << "arvore vazia" << endl;
 }
@@ -255,40 +271,121 @@ void insertOnLeaf (int k, BTnode* node, int nEntries){		//insert on a leaf that 
 }
 
 
-void insertOnIndex (int k, BTnode* father, BTnode* son){		
-
+void insertOnIndex (int k, BTnode* &father, BTnode* &son1){
 	
-	BTnode* newData = NULL;											
-	copy_node(father, newData);
-	
-	int j;
-
-	for (j = 0; j < father -> nEntries; j++)
-		if (father -> keys[j] > k) break;
-
-	father -> childs[j+1] = son;
-	father -> keys[j] = k;
-
-	for (int i = j+2; i <= father->nEntries; ++i){
-		father -> childs[i] = newData -> childs[j+1];		
-		j++;
-		if (i < father -> nEntries){
-			father -> keys[i-1] = newData -> keys[j];
+	if (father == NULL || father->nEntries != 9){ //sem split no pai
+		if (father == NULL){
+			father = createnode();
+			father-> IsRoot = 1;
+			father-> h = son1 -> h + 1;
+			father-> keys[0] = son1 -> next -> keys[0];
+			father-> childs[0] = son1;
+			father-> childs[1] = son1 -> next;
+			return;
 		}
-	}	
 
-	father -> nEntries++;
+		BTnode* newData = NULL;											
+		copy_node(father, newData);
+		
+		int j;
 
+		for (j = 0; j < father -> nEntries; j++)
+			if (father -> keys[j] > k) break;
+
+		father -> childs[j+1] = son1;
+		son1 -> father = father;
+		father -> keys[j] = k;
+
+		for (int i = j+2; i <= father->nEntries; ++i){
+			father -> childs[i] = newData -> childs[j+1];		
+			j++;
+			if (i < father -> nEntries){
+				father -> keys[i-1] = newData -> keys[j];
+			}
+		}	
+
+		father -> nEntries++;
+	}
+	else{							  //com split no pai
+
+		int newIndex, caso, pos;		
+
+		for (pos = 0; pos < father -> nEntries; pos++)
+			if (father -> keys[pos] > k) break;
+
+		if (pos < 4){
+			newIndex = father -> keys[4];
+			caso = 0;
+		}
+
+		else if (pos > 4 && k < father -> keys[5]){
+			newIndex = k;
+			caso = 1;
+		}
+
+		else{
+			newIndex = father -> keys[5];
+			caso = 1;
+		}
+
+		BTnode* newnode1 = NULL;
+		BTnode* newnode2 = NULL;
+
+		newnode1 = createnode();
+		newnode2 = createnode();
+
+		newnode1 ->	h = father -> h;
+		newnode2 -> h = father -> h;
+
+
+		switch (caso){
+			case 0:	insertOnLeaf(k, newnode1, newnode1->nEntries);
+					for (int i = 0; i < 4; ++i) insertOnLeaf(father -> keys[i], newnode1, newnode1->nEntries);	//metade esquerda dos dados
+					for (int i = 5; i < 9; ++i) insertOnLeaf(father -> keys[i], newnode2, newnode2->nEntries);	//metade direita dos dados						
+					newnode1 -> next = newnode2;
+
+					for (int i = 0; i < pos+1; ++i)	newnode1 -> childs[i] = father->childs[i];
+					newnode1 -> childs[pos+1] = son1;
+					son1 -> father = newnode1;
+					for (int i = pos+2; i <= newnode1 -> nEntries; ++i)	newnode1 -> childs[i] = father->childs[i-1];
+
+					for (int i = 0; i < 5; ++i)	newnode2 -> childs[i] = father->childs[i+5];	
+
+					insertOnIndex(newIndex, father->father, newnode1);
+
+					break;	
+
+			case 1:	
+					for (int i = 0; i < 5; ++i) insertOnLeaf(father -> keys[i], newnode2, newnode2->nEntries);	//metade esquerda dos dados
+					for (int i = 5; i < 9; ++i) insertOnLeaf(father -> keys[i], newnode2, newnode2->nEntries);	//metade direita dos dados						
+					newnode1 -> next = newnode2;
+
+					for (int i = 0; i <= 5; ++i)	newnode1 -> childs[i] = father->childs[i];
+					newnode2 -> childs[0] = son1;
+					son1 -> father = newnode2;
+
+					for (int i = pos+2; i <= newnode1 -> nEntries; ++i)	newnode1 -> childs[i] = father->childs[i-1];
+
+					for (int i = 1; i < 5; ++i)	newnode2 -> childs[i] = father->childs[i+5];
+
+					insertOnIndex(newIndex, father->father, newnode1);
+
+					break;
+
+			default: cerr << "Some error ocurred on the split" << endl;
+
+		}
+
+	}
 }
-
 
 bool insert(int k, BTnode* &node){
 	if (node == NULL){					//empty tree
 		BTnode* aux = createnode();
 		aux -> keys[0] = k;
 		aux -> nEntries = 1;
-		aux ->IsRoot = 1;
-		aux ->IsLeaf = 1;
+		aux -> IsRoot = 1;
+		aux -> IsLeaf = 1;
 		copy_node(aux, node);
 
 		delete aux;
@@ -389,12 +486,11 @@ bool insert(int k, BTnode* &node){
 					else{
 						newIndex = node -> keys[5];
 						caso = 1;
-					}
-
-					cout << "Indice escolhido: " << newIndex <<endl;
+					}					
 
 					copy_node(node, copy);
 					copy_node(node, newnode);
+
 					for (int i = 0; i < 9; ++i) node ->keys[i] = -1;
 					for (int i = 0; i < 9; ++i) newnode ->keys[i] = -1;
 
@@ -428,16 +524,8 @@ bool insert(int k, BTnode* &node){
 						default: cerr << "Some error ocurred on the split" << endl;
 					}
 
-					if (copy->father->nEntries != 9){ //sem split no pai						
-						newnode->father = copy->father;
-						insertOnIndex (newIndex, newnode->father, newnode);
-					}
-					else{							  //com split no pai
-
-					}
-
-
-
+					newnode->father = copy->father;
+					insertOnIndex (newIndex, newnode->father, newnode);
 				}	
 
 			}
@@ -464,30 +552,52 @@ bool insert(int k, BTnode* &node){
 		}
 	}
 
+}
+
+bool remove(int k, BTnode* &node){
+	if (find_eq(k, node) == 0) return 0;
+
+	if (node -> IsLeaf == 1){									//if the node is a leaf (data) node		
+		
+		for (int i = 0; i < (node -> nEntries); ++i){			//check all the elements
+			if (node->keys[i] == k){
+				for (int j = i+1; j < (node -> nEntries); ++j){
+					node->keys[i] = node->keys[j];
+					i++;
+				}				
+			}				
+		}
+		node->keys[node->nEntries--] = -1;		
+		return 1;												
+	}
+	else if (k < node->keys[0]){								//if the key is smaller than the leftmost element.
+		return remove(k, node->childs[0]);						//then, go to the leftmost child
+	}
+	else if (k > node->keys[ (node -> nEntries-1)] ){			//if the key is bigger than the rightmost element
+		return remove(k, node->childs[ (node -> nEntries) ]);	//then, go to rightmost child
+	}
+	else{														//the key is between child 0 and child n
+		int i;
+		for (i = 0; i < (node -> nEntries); ++i){				//run all the indexes of the node.
+			if (node->keys[i] > k) break;						//find an index greater than the key
+		}		
+		return remove(k, node->childs[i]);						//then, go to the left child of the found index 
+	}
 
 
 }
+
 
 int bulkLoading(int *vet, int size, BTnode* &node){
-
-	//Bubble Sort
-	int temp;
-        
-    for(int i = 1; i < size; ++i)
-    {
-        for(int j = 0; j < (size-i); ++j)
-            if(vet[j] > vet[j+1])
-            {
-                temp = vet[j];
-                vet[j] = vet[j+1];
-                vet[j+1] = temp;
-            }
-    }
-
-    //Bulk-Loading
-
+	for (int i = 0; i < size; ++i){
+		insert(vet[i], node);
+	}
+	
 }
 
+int deleteKey(){
+	return 0;
+}
 
 
 
