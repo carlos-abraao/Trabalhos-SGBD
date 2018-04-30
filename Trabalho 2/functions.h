@@ -22,6 +22,16 @@ struct registro_venda{
 	int qtd;
 };
 
+struct registro_join{
+	int id_ven;
+	int id_func;
+	string nome_produto;
+	int qtd;
+	string nome;
+	string sobrenome;
+	int idade;
+};
+
 struct pagina_func{
 	registro_func registros[16];
 };
@@ -30,14 +40,23 @@ struct pagina_venda{
 	registro_venda registros[16];
 };
 
+struct pagina_join{
+	registro_join registros[16];
+};
+
 struct tabela{
 	pagina_func *paginas_func;
 	pagina_venda *paginas_venda;
 	int qtd_paginas;
 };
 
+struct tabela_join{
+	pagina_join *paginas_join;	
+	int qtd_paginas;
+};
+
 tabela tab1, tab2;
-int last_indf, last_indv;
+int last_indf, last_indv, last_indj;
 typedef pair <int, int> pagtup;
 typedef map <int, pagtup> index;
 
@@ -263,8 +282,7 @@ index create_index_ven(tabela tab){
 
 	int i;
 	for (i = 0; i < tab2.qtd_paginas-1; ++i){
-		for (int j = 0; j < 16; ++j){
-			cout << tab2.paginas_venda[i].registros[j].id_ven << endl;
+		for (int j = 0; j < 16; ++j){			
 			ind.insert(make_pair( tab2.paginas_venda[i].registros[j].id_ven, make_pair(i,j)));
 		}
 		
@@ -308,6 +326,106 @@ void print_tab_ven(){
 	cout << endl;
 
 }
+
+void copy_join(registro_func copy, registro_venda copie, registro_join &paste){
+	paste.id_ven   	   = copie.id_ven  	   ;
+	paste.id_func      = copie.id_func     ;
+	paste.nome_produto = copie.nome_produto;
+	paste.qtd     	   = copie.qtd    	   ;
+	paste.nome 		   = copy.nome 	   	   ;
+	paste.sobrenome	   = copy.sobrenome	   ;
+	paste.idade		   = copy.idade	   	   ;
+	
+}
+
+void print_join(registro_join reg){
+	cout << "id da venda: " << reg.id_ven   	 		  << endl; 
+	cout << "id do funcionário: " << reg.id_func      	  << endl; 
+	cout << "nome do produto: " << reg.nome_produto 	  << endl; 
+	cout << "quantidade do produto: " << reg.qtd     	  << endl; 
+	cout << "nome do funcionario: " << reg.nome 		  << endl; 
+	cout << "sobrenome do funcionario: " << reg.sobrenome << endl; 
+	cout << "idade do funcionario: " << reg.idade		  << endl; 	
+}
+
+
+void print_pag_join(pagina_join pag){
+	for (int i = 0; i < 16; ++i){
+		print_join(pag.registros[i]);
+		cout << endl;
+	}
+	cout << endl;
+}
+
+void print_tab_join(tabela_join tabj){
+	int i;
+	for (i = 0; i < tabj.qtd_paginas-1; ++i){	
+		cout << "======================================= Registros da página " << i+1 << ": =======================================\n";
+		print_pag_join(tabj.paginas_join[i]);
+
+	}	
+	cout << "======================================= Registros da página " << i+1 << ": =======================================\n";	
+	for (int j = 0; j < last_indf; ++j){
+		print_join(tabj.paginas_join[i].registros[j]);
+		cout << endl;
+	}
+	cout << endl;
+
+}
+
+tabela_join nest_loop_index_join(index ind){
+
+	registro_join regj;
+	pagina_join   pagj;	
+	list <pagina_join> joins;
+
+	int ind_pag = 0;		
+	int i;
+	for (i = 0; i < tab2.qtd_paginas - 1; ++i){
+		for (int j = 0; j < 16; ++j){
+			if (ind_pag < 16){
+			copy_join(tab1.paginas_func[ind[tab2.paginas_venda[i].registros[j].id_func].first].registros[ind[tab2.paginas_venda[i].registros[j].id_func].second], tab2.paginas_venda[i].registros[j], pagj.registros[ind_pag++]);
+			}
+			else{
+				ind_pag = 0;
+				joins.push_back(pagj);
+				copy_join(tab1.paginas_func[ind[tab2.paginas_venda[i].registros[j].id_func].first].registros[ind[tab2.paginas_venda[i].registros[j].id_func].second], tab2.paginas_venda[i].registros[j], pagj.registros[ind_pag++]);
+			}
+		}		
+		
+	}
+
+	for (int j = 0; j < last_indv; ++j){
+			if (ind_pag < 16){
+			copy_join(tab1.paginas_func[ind[tab2.paginas_venda[i].registros[j].id_func].first].registros[ind[tab2.paginas_venda[i].registros[j].id_func].second], tab2.paginas_venda[i].registros[j], pagj.registros[ind_pag++]);
+			}
+			else{
+				ind_pag = 0;
+				joins.push_back(pagj);
+				copy_join(tab1.paginas_func[ind[tab2.paginas_venda[i].registros[j].id_func].first].registros[ind[tab2.paginas_venda[i].registros[j].id_func].second], tab2.paginas_venda[i].registros[j], pagj.registros[ind_pag++]);
+			}
+	}
+
+	last_indj = ind_pag;
+
+	tabela_join tabj;
+
+	tabj.paginas_join = new pagina_join [joins.size()];
+	
+	tabj.qtd_paginas = joins.size();
+
+	list <pagina_join>::iterator it; i = 0;
+
+	for (it = joins.begin(); it != joins.end(); it++){
+		tabj.paginas_join[i++] = *it;
+	}
+
+	return tabj;
+
+}
+
+
+
 
 
 
