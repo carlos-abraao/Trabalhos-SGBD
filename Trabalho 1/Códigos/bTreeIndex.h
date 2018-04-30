@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include <math.h>
+
 #define D 5		//Order
 #define M 10	//Order
 
@@ -584,15 +585,55 @@ bool remove(int k, BTnode* &node){
 		return remove(k, node->childs[i]);						//then, go to the left child of the found index 
 	}
 
-
 }
 
 
 int bulkLoading(int *vet, int size, BTnode* &node){
 	for (int i = 0; i < size; ++i){
 		insert(vet[i], node);
-	}
-	
+	}	
+
+	//Bubble Sort
+	int temp;
+        
+    for(int i = 1; i < size; ++i)
+    {
+        for(int j = 0; j < (size-i); ++j)
+            if(vet[j] > vet[j+1])
+            {
+                temp = vet[j];
+                vet[j] = vet[j+1];
+                vet[j+1] = temp;
+            }
+    }
+
+    //Bulk-Loading
+    int qtdLeafs = ceil(size/9); 									//Quantidade de folhas necessárias
+
+    BTnode* folhas[qtdLeafs];										//Criando um vetor para alocar as folhas
+
+    int elemento = 0;
+
+    for (int i = 0; i < qtdLeafs-1; ++i)
+    {
+    	folhas[i] = createnode(); 									//Criando a folha no folhas[i]
+    	node -> nEntries = 9;
+		node -> IsRoot = 0;
+		node -> IsLeaf = 1;
+    	if(i-1 > 0 && folhas[i-1] != NULL){
+    		//node -> prev = left; Apontar para a folha anterior
+    	}
+    	for (int j = 0; j < 9; ++j) 							//Alocando os elementos nessa folha
+    		{
+				if(elemento > size-1){ 							//Paro para não tentar alocar mais elemetnos do que tenho
+					break;
+				}
+				node -> keys[j] = vet[elemento];					//Aloco o elemento na posição j da folha
+				elemento++;
+    		}	
+    }
+    /*Aqui ja devemos ter alocado todos os nosso elementos nas (size)
+	folhas e já podemos criar nossos índices*/
 }
 
 int deleteKey(){
