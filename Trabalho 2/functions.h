@@ -365,7 +365,7 @@ void print_tab_join(tabela_join tabj){
 
 	}	
 	cout << "======================================= Registros da página " << i+1 << ": =======================================\n";	
-	cout << last_indv << " " << last_indf << " " << last_indj << endl;
+	//cout << last_indv << " " << last_indf << " " << last_indj << endl;
 	for (int j = 0; j < last_indv; ++j){
 		print_join(tabj.paginas_join[i].registros[j]);
 		cout << endl;
@@ -406,6 +406,8 @@ tabela_join nest_loop_index_join(index ind){
 				copy_join(tab1.paginas_func[ind[tab2.paginas_venda[i].registros[j].id_func].first].registros[ind[tab2.paginas_venda[i].registros[j].id_func].second], tab2.paginas_venda[i].registros[j], pagj.registros[ind_pag++]);
 			}
 	}
+
+	joins.push_back(pagj);
 
 	last_indj = ind_pag;
 
