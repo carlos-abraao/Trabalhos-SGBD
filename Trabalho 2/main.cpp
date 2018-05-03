@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc, char const *argv[]) {
 
 	if (argc < 3) {
-		cerr << "\nError - try: " << argv[0] << " input-instance-file" << endl;
+		cerr << "\nError - Adicione as instancias de dados na seguinte oredem: Dados funcionários, Dados Vendas" << endl;
 		return 2;
 	}
 

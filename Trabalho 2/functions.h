@@ -365,7 +365,8 @@ void print_tab_join(tabela_join tabj){
 
 	}	
 	cout << "======================================= Registros da página " << i+1 << ": =======================================\n";	
-	for (int j = 0; j < last_indf; ++j){
+	cout << last_indv << " " << last_indf << " " << last_indj << endl;
+	for (int j = 0; j < last_indv; ++j){
 		print_join(tabj.paginas_join[i].registros[j]);
 		cout << endl;
 	}
