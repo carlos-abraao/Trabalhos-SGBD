@@ -1,11 +1,17 @@
+//Alunos: Carlos Abraao - 401357 & Leonardo Monteiro - 388838
+//Segundo trabalho da disciplina de Sistema de Gerenciamento e Bancos de Dados - CK0117
+//Nested Loop Index Join
+
 #include <iostream>
-#include <fstream>
 #include <string>
 #include "functions.h"
 
 using namespace std;
 
-//Pesquisar mais, estrutura de índice:    std::map<int chave, int id_pag, int id_reg,> indice;
+// para compilar o programa é preciso utilizar o c++ 11, no terminal do linux é só rodar o comando : " g++ -std=c++11 main.cpp -o <nome-do executavel>"
+// para rodar o executável é necessário passar os arquivo de dados como argumento, no terminal do linux: ./<nome-do executavel> data_funcionários data_vendas
+// é importante que os argumentos sejam passados nessa ordem, caso contrário o programa não funcionará
+// aparentemente o arquivo de saída está com um problema para os caracteres especias (ç, á, ó é, etc), não sei como reesolver isso
 
 int main(int argc, char const *argv[]) {
 
@@ -14,22 +20,19 @@ int main(int argc, char const *argv[]) {
 		return 2;
 	}
 
-	init_bank(argv[1], argv[2]);
+	init_bank(argv[1], argv[2]);						//Criando as tabelas	
 
-	//print_tab_ven();
-
-	index indice = create_index_func(tab1);
-
-	index indice2 = create_index_ven(tab2);
-
-	cout << indice[9984].first << " " << indice[9984].second << endl;
-
-	cout << tab1.paginas_func[indice[9984].first].registros[indice[9984].second].nome << endl << tab1.paginas_func[indice[9984].first].registros[indice[9984].second].sobrenome << endl;
-
-	cout << tab2.paginas_venda[indice2[39996].first].registros[indice2[39996].second].nome_produto << endl << tab2.paginas_venda[indice2[39996].first].registros[indice2[39996].second].id_ven << endl << tab2.paginas_venda[indice2[39996].first].registros[indice2[39996].second].id_func << endl;	
-
-	tabela_join join = nest_loop_index_join(indice);
-
-	print_tab_join(join);
+	index indice = create_index_func(tab1);				//Criando o índice para a tabela de funcionários
 	
+	tabela_join join = nest_loop_index_join(indice);	//Fazendo a junção
+
+	//print_tab_func(); 								//descomentar para imprimir os funcionários na tela
+
+	//print_tab_ven();									//descomenar paa imprimir as vendas na tela
+
+	//print_tab_join(join);								//descomenar paa imprimir as junções na tela
+
+	file_tab_join(join);								//Gerando o arquivo de junção
+
+	return 0;	
 }
